@@ -45,6 +45,14 @@ Resources:
           Properties:
             Path: /
             Method: post
+  Layer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - python3.7
+      ContentUri: Layer/Shirley-Layer.zip
+      LayerName: Shirley-Layer
+
   LambdaExecutionRole:
     Description: Creating service role in IAM for AWS Lambda
     Type: AWS::IAM::Role
