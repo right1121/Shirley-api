@@ -2,7 +2,7 @@ import json
 from http import HTTPStatus
 
 
-class api_response():
+class responser():
     __headers = {
             'Content-Type': 'application/json; charset=utf-8',
             'Access-Control-Allow-Origin': '*'
@@ -10,7 +10,7 @@ class api_response():
 
     def __init__(self):
         self.__status_code = HTTPStatus.OK
-        self.__headers = api_response.__headers
+        self.__headers = responser.__headers
         self.__body = {}
 
     @property
@@ -53,7 +53,7 @@ class api_response():
 
         return {
             'statusCode': HTTPStatus.BAD_REQUEST,
-            'headers': api_response.__headers,
+            'headers': responser.__headers,
             'body': json.dumps(body)
         }
 
@@ -62,10 +62,10 @@ class api_response():
         if body is None:
             body = {}
         elif type(body) is not dict:
-            body = {}
+            raise TypeError
 
         return {
             'statusCode': HTTPStatus.INTERNAL_SERVER_ERROR,
-            'headers': api_response.__headers,
+            'headers': responser.__headers,
             'body': json.dumps(body)
         }

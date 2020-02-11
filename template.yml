@@ -50,7 +50,7 @@ Resources:
     Properties:
       CompatibleRuntimes:
         - python3.7
-      ContentUri: Layer/Shirley-Layer.zip
+      ContentUri: Layer
       LayerName: Shirley-Layer
 
   LambdaExecutionRole:
