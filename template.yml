@@ -22,14 +22,15 @@ Globals:
       Enabled: true
       Type: Canary10Percent5Minutes
       Role: !Ref CodeDeployRole
+    Runtime: python3.8
+    Handler: main.lambda_handler
 
 Resources:
   HelloWorld:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub 'awscodestar-${ProjectId}-lambda-HelloWorld'
-      Handler: index.handler
-      Runtime: python3.7
+      FunctionName: !Sub '${ProjectId}-fetch_master_data'
+      CodeUri: ./src/fetch_master_data/
       Role:
         Fn::GetAtt:
         - LambdaExecutionRole
@@ -40,11 +41,7 @@ Resources:
           Properties:
             Path: /
             Method: get
-        PostEvent:
-          Type: Api
-          Properties:
-            Path: /
-            Method: post
+
   Layer:
     Type: AWS::Serverless::LayerVersion
     Properties:
