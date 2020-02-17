@@ -22,15 +22,17 @@ Globals:
       Enabled: true
       Type: Canary10Percent5Minutes
       Role: !Ref CodeDeployRole
-    Runtime: python3.8
-    Handler: main.lambda_handler
 
 Resources:
-  HelloWorld:
+  FetchMaster:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub '${ProjectId}-fetch_master_data'
+      FunctionName: !Sub 'awscodestar-${ProjectId}-fetch_master_data'
       CodeUri: ./src/fetch_master_data/
+      Runtime: python3.8
+      Handler: main.lambda_handler
+      Layers:
+        - !Ref Layer
       Role:
         Fn::GetAtt:
         - LambdaExecutionRole
@@ -39,16 +41,80 @@ Resources:
         GetEvent:
           Type: Api
           Properties:
-            Path: /
+            Path: /master
             Method: get
+      Layers: ApiResponser
 
-  Layer:
+  GetTrain:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'awscodestar-${ProjectId}-get_trains'
+      CodeUri: ./src/get_trains/
+      Runtime: python3.8
+      Handler: main.lambda_handler
+      Layers:
+        - !Ref Layer
+      Role:
+        Fn::GetAtt:
+        - LambdaExecutionRole
+        - Arn
+      Events:
+        GetEvent:
+          Type: Api
+          Properties:
+            Path: /train
+            Method: get
+      Layers: ApiResponser
+
+  PostTrain:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'awscodestar-${ProjectId}-regist_train'
+      CodeUri: ./src/regist_train/
+      Runtime: python3.8
+      Handler: main.lambda_handler
+      Layers:
+        - !Ref Layer
+      Role:
+        Fn::GetAtt:
+        - LambdaExecutionRole
+        - Arn
+      Events:
+        GetEvent:
+          Type: Api
+          Properties:
+            Path: /train
+            Method: post
+      Layers: ApiResponser
+
+  PutTrain:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'awscodestar-${ProjectId}-update_train'
+      CodeUri: ./src/update_train/
+      Runtime: python3.8
+      Handler: main.lambda_handler
+      Layers:
+        - !Ref Layer
+      Role:
+        Fn::GetAtt:
+        - LambdaExecutionRole
+        - Arn
+      Events:
+        GetEvent:
+          Type: Api
+          Properties:
+            Path: /train
+            Method: put
+      Layers: ApiResponser
+
+  ApiResponser:
     Type: AWS::Serverless::LayerVersion
     Properties:
       CompatibleRuntimes:
-        - python3.7
-      ContentUri: Layer
-      LayerName: Shirley-Layer
+        - python3.8
+      ContentUri: Layer/api_responser
+      LayerName: API-Responser
 
   LambdaExecutionRole:
     Description: Creating service role in IAM for AWS Lambda

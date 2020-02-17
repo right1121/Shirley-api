@@ -2,7 +2,7 @@ import json
 
 import boto3
 
-from api_response import api_response
+from api import responser
 
 dynamodb_client = boto3.client('dynamodb')
 
@@ -17,11 +17,11 @@ def lambda_handler(event, context):
         return main()
     except Exception as e:
         print("Exception error", e)
-        return api_response.exception_error()
+        return responser.exception_error()
 
 
 def main():
-    response = api_response()
+    response = responser()
 
     master_data = {}
 
