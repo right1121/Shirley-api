@@ -32,7 +32,7 @@ Resources:
       Runtime: python3.8
       Handler: main.lambda_handler
       Layers:
-        - !Ref Layer
+        - !Ref ApiResponser
       Role:
         Fn::GetAtt:
         - LambdaExecutionRole
@@ -43,7 +43,6 @@ Resources:
           Properties:
             Path: /master
             Method: get
-      Layers: ApiResponser
 
   GetTrain:
     Type: AWS::Serverless::Function
@@ -53,7 +52,7 @@ Resources:
       Runtime: python3.8
       Handler: main.lambda_handler
       Layers:
-        - !Ref Layer
+        - !Ref ApiResponser
       Role:
         Fn::GetAtt:
         - LambdaExecutionRole
@@ -64,7 +63,6 @@ Resources:
           Properties:
             Path: /train
             Method: get
-      Layers: ApiResponser
 
   PostTrain:
     Type: AWS::Serverless::Function
@@ -74,7 +72,7 @@ Resources:
       Runtime: python3.8
       Handler: main.lambda_handler
       Layers:
-        - !Ref Layer
+        - !Ref ApiResponser
       Role:
         Fn::GetAtt:
         - LambdaExecutionRole
@@ -85,7 +83,6 @@ Resources:
           Properties:
             Path: /train
             Method: post
-      Layers: ApiResponser
 
   PutTrain:
     Type: AWS::Serverless::Function
@@ -95,7 +92,7 @@ Resources:
       Runtime: python3.8
       Handler: main.lambda_handler
       Layers:
-        - !Ref Layer
+        - !Ref ApiResponser
       Role:
         Fn::GetAtt:
         - LambdaExecutionRole
@@ -106,7 +103,6 @@ Resources:
           Properties:
             Path: /train
             Method: put
-      Layers: ApiResponser
 
   ApiResponser:
     Type: AWS::Serverless::LayerVersion
