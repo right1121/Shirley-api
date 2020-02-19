@@ -13,7 +13,11 @@ Parameters:
   Stage:
     Type: String
     Description: The name for a project pipeline stage, such as Staging or Prod, for which resources are provisioned and deployed.
-    Default: ''
+    Default: 'Stage'
+    AllowedValues:
+      - 'Stage'
+      - 'Prod'
+
   MasterModelTable:
     Type: String
     Default: 'model_maker'
@@ -21,11 +25,28 @@ Parameters:
     Type: String
     Default: 'railway_company'
 
+Mappings:
+   EnvironmentDiff:
+    AliasName:
+      Stage: $LATEST
+      Prod: live
+    DeploymentPreferenceEnabled:
+      Stage: false
+      Prod: true
+
 Globals:
   Function:
-    AutoPublishAlias: live
+    AutoPublishAlias:
+      !FindInMap
+        - EnvironmentDiff
+        - AliasName
+        - !Ref Stage
     DeploymentPreference:
-      Enabled: true
+      Enabled:
+        !FindInMap
+          - EnvironmentDiff
+          - DeploymentPreferenceEnabled
+          - !Ref Stage
       Type: Canary10Percent5Minutes
       Role: !Ref CodeDeployRole
 
@@ -33,7 +54,7 @@ Resources:
   ApiGateway:
     Type: AWS::Serverless::Api
     Properties:
-      StageName: Prod
+      StageName: !Ref Stage
       Cors: "'www.shirley-depot.com'"
       Auth:
         DefaultAuthorizer: CognitoAuthorizer
@@ -164,6 +185,7 @@ Resources:
   UserPool:
     Type: AWS::Cognito::UserPool
     Properties:
+      UserPoolName: !Sub '${Stage}-Shirley'
       AdminCreateUserConfig:
         AllowAdminCreateUserOnly: false
         UnusedAccountValidityDays: 7
@@ -180,7 +202,7 @@ Resources:
   UserPoolAppClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
-      ClientName: mobile_app
+      ClientName: !Sub '${Stage}-Shirley-client'
       ExplicitAuthFlows:
         - USER_PASSWORD_AUTH
       GenerateSecret: false
