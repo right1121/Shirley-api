@@ -13,17 +13,55 @@ Parameters:
   Stage:
     Type: String
     Description: The name for a project pipeline stage, such as Staging or Prod, for which resources are provisioned and deployed.
-    Default: ''
+    Default: 'Stage'
+    AllowedValues:
+      - 'Stage'
+      - 'Prod'
+
+  MasterModelTable:
+    Type: String
+    Default: 'model_maker'
+  MasterRailwayCompanyTable:
+    Type: String
+    Default: 'railway_company'
+
+Mappings:
+   EnvironmentDiff:
+    AliasName:
+      Stage: $LATEST
+      Prod: live
+    DeploymentPreferenceEnabled:
+      Stage: false
+      Prod: true
 
 Globals:
   Function:
-    AutoPublishAlias: live
+    AutoPublishAlias:
+      !FindInMap
+        - EnvironmentDiff
+        - AliasName
+        - !Ref Stage
     DeploymentPreference:
-      Enabled: true
+      Enabled:
+        !FindInMap
+          - EnvironmentDiff
+          - DeploymentPreferenceEnabled
+          - !Ref Stage
       Type: Canary10Percent5Minutes
       Role: !Ref CodeDeployRole
 
 Resources:
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref Stage
+      Cors: "'www.shirley-depot.com'"
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !GetAtt UserPool.Arn
+
   FetchMaster:
     Type: AWS::Serverless::Function
     Properties:
@@ -37,12 +75,19 @@ Resources:
         Fn::GetAtt:
         - LambdaExecutionRole
         - Arn
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref MasterModelTable
+        - DynamoDBReadPolicy:
+            TableName: !Ref MasterRailwayCompanyTable
       Events:
         GetEvent:
           Type: Api
           Properties:
             Path: /master
             Method: get
+            RestApiId: !Ref ApiGateway
+            Auth:
 
   GetTrain:
     Type: AWS::Serverless::Function
@@ -57,6 +102,9 @@ Resources:
         Fn::GetAtt:
         - LambdaExecutionRole
         - Arn
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref depot
       Events:
         GetEvent:
           Type: Api
@@ -77,6 +125,9 @@ Resources:
         Fn::GetAtt:
         - LambdaExecutionRole
         - Arn
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref depot
       Events:
         GetEvent:
           Type: Api
@@ -97,6 +148,9 @@ Resources:
         Fn::GetAtt:
         - LambdaExecutionRole
         - Arn
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref depot
       Events:
         GetEvent:
           Type: Api
@@ -127,3 +181,29 @@ Resources:
       ManagedPolicyArns:
         - !Sub 'arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
       PermissionsBoundary: !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:policy/CodeStar_${ProjectId}_PermissionsBoundary'
+
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub '${Stage}-Shirley'
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+        UnusedAccountValidityDays: 7
+      AutoVerifiedAttributes:
+        - email
+      MfaConfiguration: 'OFF'
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+          RequireUppercase: true
+  UserPoolAppClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: !Sub '${Stage}-Shirley-client'
+      ExplicitAuthFlows:
+        - USER_PASSWORD_AUTH
+      GenerateSecret: false
+      UserPoolId: !Ref UserPool
