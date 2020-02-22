@@ -34,22 +34,6 @@ Mappings:
       Stage: false
       Prod: true
 
-Globals:
-  Function:
-    AutoPublishAlias:
-      !FindInMap
-        - EnvironmentDiff
-        - AliasName
-        - !Ref Stage
-    DeploymentPreference:
-      Enabled:
-        !FindInMap
-          - EnvironmentDiff
-          - DeploymentPreferenceEnabled
-          - !Ref Stage
-      Type: Canary10Percent5Minutes
-      Role: !Ref CodeDeployRole
-
 Resources:
   ApiGateway:
     Type: AWS::Serverless::Api
