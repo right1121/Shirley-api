@@ -34,6 +34,14 @@ Mappings:
       Stage: false
       Prod: true
 
+Globals:
+  Function:
+    AutoPublishAlias: live
+    DeploymentPreference:
+      Enabled: true
+      Type: Canary10Percent5Minutes
+      Role: !Ref CodeDeployRole
+
 Resources:
   ApiGateway:
     Type: AWS::Serverless::Api
