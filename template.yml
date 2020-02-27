@@ -64,9 +64,7 @@ Resources:
       Layers:
         - !Ref ApiResponser
       Role:
-        Fn::GetAtt:
-        - LambdaExecutionRole
-        - Arn
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref MasterModelTable
@@ -91,9 +89,7 @@ Resources:
       Layers:
         - !Ref ApiResponser
       Role:
-        Fn::GetAtt:
-        - LambdaExecutionRole
-        - Arn
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref depot
@@ -114,9 +110,7 @@ Resources:
       Layers:
         - !Ref ApiResponser
       Role:
-        Fn::GetAtt:
-        - LambdaExecutionRole
-        - Arn
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref depot
@@ -137,9 +131,7 @@ Resources:
       Layers:
         - !Ref ApiResponser
       Role:
-        Fn::GetAtt:
-        - LambdaExecutionRole
-        - Arn
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref depot
@@ -157,22 +149,6 @@ Resources:
         - python3.8
       ContentUri: Layer/api_responser
       LayerName: API-Responser
-
-  LambdaExecutionRole:
-    Description: Creating service role in IAM for AWS Lambda
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: !Sub 'CodeStar-${ProjectId}-Execution${Stage}'
-      AssumeRolePolicyDocument:
-        Statement:
-        - Effect: Allow
-          Principal:
-            Service: [lambda.amazonaws.com]
-          Action: sts:AssumeRole
-      Path: /
-      ManagedPolicyArns:
-        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
-      PermissionsBoundary: !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:policy/CodeStar_${ProjectId}_PermissionsBoundary'
 
   UserPool:
     Type: AWS::Cognito::UserPool
