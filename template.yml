@@ -64,7 +64,6 @@ Resources:
       Layers:
         - !Ref ApiResponser
       Policies:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
         - DynamoDBReadPolicy:
             TableName: !Ref MasterModelTable
         - DynamoDBReadPolicy:
@@ -88,7 +87,6 @@ Resources:
       Layers:
         - !Ref ApiResponser
       Policies:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
         - DynamoDBReadPolicy:
             TableName: !Ref depot
       Events:
@@ -108,7 +106,6 @@ Resources:
       Layers:
         - !Ref ApiResponser
       Policies:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
         - DynamoDBCrudPolicy:
             TableName: !Ref depot
       Events:
@@ -128,7 +125,6 @@ Resources:
       Layers:
         - !Ref ApiResponser
       Policies:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
         - DynamoDBCrudPolicy:
             TableName: !Ref depot
       Events:
