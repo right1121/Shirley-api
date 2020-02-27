@@ -63,9 +63,8 @@ Resources:
       Handler: main.lambda_handler
       Layers:
         - !Ref ApiResponser
-      Role:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
         - DynamoDBReadPolicy:
             TableName: !Ref MasterModelTable
         - DynamoDBReadPolicy:
@@ -88,9 +87,8 @@ Resources:
       Handler: main.lambda_handler
       Layers:
         - !Ref ApiResponser
-      Role:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
         - DynamoDBReadPolicy:
             TableName: !Ref depot
       Events:
@@ -109,9 +107,8 @@ Resources:
       Handler: main.lambda_handler
       Layers:
         - !Ref ApiResponser
-      Role:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
         - DynamoDBCrudPolicy:
             TableName: !Ref depot
       Events:
@@ -130,9 +127,8 @@ Resources:
       Handler: main.lambda_handler
       Layers:
         - !Ref ApiResponser
-      Role:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
         - DynamoDBCrudPolicy:
             TableName: !Ref depot
       Events:
