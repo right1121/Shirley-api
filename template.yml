@@ -75,6 +75,7 @@ Resources:
             Method: get
             RestApiId: !Ref ApiGateway
             Auth:
+              Authorizer: NONE
 
   GetTrain:
     Type: AWS::Serverless::Function
@@ -94,6 +95,7 @@ Resources:
           Properties:
             Path: /train
             Method: get
+            RestApiId: !Ref ApiGateway
 
   PostTrain:
     Type: AWS::Serverless::Function
@@ -113,6 +115,7 @@ Resources:
           Properties:
             Path: /train
             Method: post
+            RestApiId: !Ref ApiGateway
 
   PutTrain:
     Type: AWS::Serverless::Function
@@ -132,6 +135,7 @@ Resources:
           Properties:
             Path: /train
             Method: put
+            RestApiId: !Ref ApiGateway
 
   ApiResponser:
     Type: AWS::Serverless::LayerVersion
